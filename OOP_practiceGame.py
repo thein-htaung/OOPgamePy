@@ -50,9 +50,13 @@ class Player(Character):
 
     def weight_training(self):
         print('Player does the weight training.')
+        sleep(2)
+        print("Gains +3 Atk")
 
     def toture_room(self):
-        print('Player goes into the torture room. Gain +5 def')
+        print('Player goes into the torture room')
+        sleep(2)
+        print("Gain +5 Def")
 
 
 one_eyed_bat = Monster('one-eyed Bat', 30, 5, 3, "screech")
@@ -62,3 +66,5 @@ mage = Player('Mage', 100, 15, 20, "heal")
 # mage.loiter()
 mage.hit(one_eyed_bat)
 mage.hit(one_eyed_bat)
+mage.weight_training()
+mage.toture_room()
