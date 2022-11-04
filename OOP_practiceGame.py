@@ -83,13 +83,13 @@ class Player(Character):
 
 
 def dead(player):
-    if not player.health:
+    if player.health <= 0:
         print('You are dead..for now. Game over.')
         gameover = True
         return gameover
 
 
-one_eyed_bat = Monster('one-eyed Bat', 30, 25, 5, "screech")
+one_eyed_bat = Monster('one-eyed Bat', 30, 25, 10, "screech")
 one_eyed_bat.inspect()
 
 mage = Player('Mage', 100, 15, 15, "heal")
@@ -97,7 +97,6 @@ mage = Player('Mage', 100, 15, 15, "heal")
 
 
 while True:
-    #mage.hit(one_eyed_bat)
     one_eyed_bat.attack(mage)
     mage.weight_training()
     mage.toture_room()
