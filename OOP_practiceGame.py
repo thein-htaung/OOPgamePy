@@ -7,32 +7,44 @@ from time import sleep
 
 
 class Character:
-    def __init__(self, name, health, attack, defense):
+    """ Create base stats for characters"""
+
+    def __init__(self, name, health, atk_stat, def_stat):
         self.name = name
         self.health = health
-        self.attack = attack
-        self.defense = defense
+        self.atk_stat = atk_stat
+        self.def_stat = def_stat
+        self.alive = True
 
     def loiter(self):
         print(f'{self.name} is idling..')
         sleep(1)
         print('Idling is done.')
 
+    def inflict_damage(self, other):
+        return (self.atk_stat - other.def_stat * 0.5) if self.atk_stat > other.def_stat * 0.5 else 0
+
+    def print_hp(self):
+        print(f'HP of {self.name} is now {self.health}')
+
 
 class Monster(Character):
-    def __init__(self, name, health, attack, defense, ability):
-        super().__init__(name, health, attack, defense)
+    def __init__(self, name, health, atk_stat, defense, ability):
+        super().__init__(name, health, atk_stat, defense)
         self.ability = ability
 
-    def crawl(self):
-        print("The monster is crawling nearby.")
+    def attack(self, player):
+        print("The monster attacks!")
+        player.health = player.health - self.inflict_damage(player)
+        print(f"Dealt {self.inflict_damage(player)} damage.")
 
     def inspect(self):
-        print(f"Stats for {self.name}: Health is {self.health}. Attack is {self.attack}. "
-              f"Defense is {self.defense}. Ability is {self.ability}.")
+        print(f"Stats for {self.name}: Health is {self.health}. Attack is {self.atk_stat}. "
+              f"Defense is {self.def_stat}. Ability is {self.ability}.")
 
     def monitor_hp(self):
-        if not self.health:
+        if self.health <= 0:
+            self.alive = False
             print(f'The {self.name} is gone with the wind.')
 
 
@@ -42,29 +54,48 @@ class Player(Character):
         self.skill = skill
 
     def hit(self, monster):
-        print(f"{self.name} attacks the {monster.name}.")
-        sleep(1)
-        monster.health = monster.health - self.attack
-        print(f"It's hp is now at {monster.health}.")
-        monster.monitor_hp()
+        if monster.alive:
+            print(f"{self.name} attacks the {monster.name}.")
+            sleep(1)
+            monster.health = monster.health - self.inflict_damage(monster)
+            monster.print_hp()
+            monster.monitor_hp()
+        else:
+            print('The monster is already dead.')
 
     def weight_training(self):
         print('Player does the weight training.')
         sleep(2)
-        print("Gains +3 Atk")
+        self.atk_stat = self.atk_stat + 1
+        print("Gained +1 Atk")
 
     def toture_room(self):
         print('Player goes into the torture room')
         sleep(2)
-        print("Gain +5 Def")
+        self.def_stat = self.def_stat + 3
+        self.health = self.health - 4
+        print("Gained +3 Def. Lost 4 health.")
 
 
-one_eyed_bat = Monster('one-eyed Bat', 30, 5, 3, "screech")
+def dead(player):
+    if not player.health:
+        print('You are dead..for now. Game over.')
+        gameover = True
+        return gameover
+
+
+one_eyed_bat = Monster('one-eyed Bat', 30, 5, 10, "screech")
 one_eyed_bat.inspect()
 
 mage = Player('Mage', 100, 15, 20, "heal")
 # mage.loiter()
-mage.hit(one_eyed_bat)
-mage.hit(one_eyed_bat)
-mage.weight_training()
-mage.toture_room()
+
+
+while True:
+    mage.hit(one_eyed_bat)
+    mage.weight_training()
+    mage.toture_room()
+    mage.print_hp()
+
+    if dead(mage):
+        break
