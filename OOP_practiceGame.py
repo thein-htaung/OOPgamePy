@@ -8,13 +8,13 @@ from time import sleep
 
 class Character:
     """ Create base stats for characters"""
+    alive = True
 
     def __init__(self, name, health, atk_stat, def_stat):
         self.name = name
         self.health = health
         self.atk_stat = atk_stat
         self.def_stat = def_stat
-        self.alive = True
 
     def loiter(self):
         print(f'{self.name} is idling..')
@@ -49,6 +49,8 @@ class Monster(Character):
 
 
 class Player(Character):
+    causeOfDeath = []
+
     def __init__(self, name, health, attack, defense, skill):
         super().__init__(name, health, attack, defense)
         self.skill = skill
@@ -73,8 +75,11 @@ class Player(Character):
         print('Player goes into the torture room')
         sleep(2)
         self.def_stat = self.def_stat + 3
-        self.health = self.health - 4
-        print("Gained +3 Def. Lost 4 health.")
+        self.health = self.health - 10
+        print("Gained +3 Def. Lost 10 health.")
+        if self.health <= 0:
+            self.alive = False
+            self.causeOfDeath.append("Torture room defenseTraining")
 
 
 def dead(player):
@@ -84,18 +89,20 @@ def dead(player):
         return gameover
 
 
-one_eyed_bat = Monster('one-eyed Bat', 30, 5, 10, "screech")
+one_eyed_bat = Monster('one-eyed Bat', 30, 25, 5, "screech")
 one_eyed_bat.inspect()
 
-mage = Player('Mage', 100, 15, 20, "heal")
+mage = Player('Mage', 100, 15, 15, "heal")
 # mage.loiter()
 
 
 while True:
-    mage.hit(one_eyed_bat)
+    #mage.hit(one_eyed_bat)
+    one_eyed_bat.attack(mage)
     mage.weight_training()
     mage.toture_room()
     mage.print_hp()
 
     if dead(mage):
+        print("Cause of Death is " + mage.causeOfDeath[-1])
         break
