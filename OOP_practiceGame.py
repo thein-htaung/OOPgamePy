@@ -25,7 +25,9 @@ class Character:
         return (self.atk_stat - other.def_stat * 0.5) if self.atk_stat > other.def_stat * 0.5 else 0
 
     def print_hp(self):
-        print(f'HP of {self.name} is now {self.health}')
+        if self.health < 0:
+            self.health = 0
+            print(f'HP of {self.name} is now {self.health}')
 
 
 class Monster(Character):
